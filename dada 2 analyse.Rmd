@@ -27,6 +27,14 @@ sample.names <- sapply(strsplit(basename(fnFs), "_"), `[`, 1)
 plotQualityProfile(fnFs[1:2]) #reads
 plotQualityProfile(fnRs[1:2]) #reverse reads
 
+# Correspond à profondeur d'échantillonage
+# fastq associe à chaque nucleotique un score de qualité -> qscore indiqué par des caractères (estimation de la proba d'avoir une erreur dans l'assignation de la base) = 30 ->  (1 / 1000) par exemple
+# qscore = 20 -> une chance sur 100, qscore = 40 -> une chance sur 10 000
+# ligne verte : q score, moyenne des scores de qualité pour les séquences à chaque position 
+
+
+# bcp moins bonne qualité pour les reverses (souvent le cas)
+# On ne veut pas utiliser les régions avec faible score de qualité : on garde les partie de R1 et R2 avec bon score, mais longueur doit rester suffisante pour pas perdre information. si longueur total = 400nu, R1 = 200 et R2 = 200 passe mais pas trop supprimer (à modifier selon les séquences utilisées). -> on doit avoir accès à longueur de V3 ici
 ```
 ```{r}
 # Place filtered files in filtered/ subdirectory
@@ -36,10 +44,11 @@ names(filtFs) <- sample.names
 names(filtRs) <- sample.names
 
 
-out <- filterAndTrim(fnFs, filtFs, fnRs, filtRs, truncLen=c(240,160),
+out <- filterAndTrim(fnFs, filtFs, fnRs, filtRs, truncLen=c(240,160),  #240 nu pour forward et 160 pour reverse (moins bonne qualité sur reverse)
               maxN=0, maxEE=c(2,2), truncQ=2, rm.phix=TRUE,
               compress=TRUE, multithread=FALSE) # On Windows set multithread=FALSE (only needed for filterAndTrim)
 head(out)
+# On utilise l'ADN de phix pour vérifier le run de sequençage
 ```
 ```{r}
 errF <- learnErrors(filtFs, multithread=TRUE)
@@ -57,6 +66,13 @@ dadaRs <- dada(filtRs, err=errR, multithread=TRUE)
 dadaFs[[1]]
 ```
 
+```{r}
+
+mergers <- mergePairs(dadaFs, filtFs, dadaRs, filtRs, verbose=TRUE)
+# Inspect the merger data.frame from the first sample
+head(mergers[[1]])
+
+```
 
 
 
