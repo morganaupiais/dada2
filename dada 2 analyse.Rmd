@@ -6,6 +6,15 @@ output: github_document
 
 
 ```{r}
+library(dada2)
+```
+
+
+
+
+
+
+```{r}
 path <- "/home/rstudio/dada2/dada2/MiSeq_SOP"
 
 list.files(path)
