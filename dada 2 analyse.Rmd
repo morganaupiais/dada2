@@ -1,0 +1,30 @@
+---
+title: "dada 2 analyse"
+output: github_document
+---
+
+
+
+```{r}
+path <- "/home/rstudio/dada2/dada2/MiSeq_SOP"
+
+list.files(path)
+
+
+# Forward and reverse fastq filenames have format: SAMPLENAME_R1_001.fastq and SAMPLENAME_R2_001.fastq
+
+fnFs <- sort(list.files(path, pattern="_R1_001.fastq", full.names = TRUE))
+fnRs <- sort(list.files(path, pattern="_R2_001.fastq", full.names = TRUE))
+
+# Extract sample names, assuming filenames have format: SAMPLENAME_XXX.fastq
+
+sample.names <- sapply(strsplit(basename(fnFs), "_"), `[`, 1)
+
+
+```
+
+```{r}
+plotQualityProfile(fnFs[1:2])
+
+```
+
