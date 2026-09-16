@@ -9,3 +9,12 @@ output: github_document
 wget https://mothur.s3.us-east-2.amazonaws.com/wiki/miseqsopdata.zip
 unzip miseqsopdata.zip
 ```
+
+```{bash}
+#sequence for taxonomy
+
+
+
+
+```
+
