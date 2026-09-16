@@ -159,10 +159,46 @@ cat("Of those,", sum(match.ref), "were exact matches to the expected reference s
 
 # Ici on à 20 séquences detectée, et 20 séquences correspondant aux séquences de référence : dada2 n'a pas fait d'erreur dans le tri des séquences. Bravo dada2
 ```
+
+
+```{r}
+
+
+
+```
+
+
+
+
 ```{r}
 #représentation graphique
 
+library(phyloseq); packageVersion("phyloseq")
 
+library(Biostrings); packageVersion("Biostrings")
+library(ggplot2); packageVersion("ggplot2")
+
+
+```
+
+```{r}
+theme_set(theme_bw())
+
+samples.out <- rownames(seqtab.nochim)
+subject <- sapply(strsplit(samples.out, "D"), `[`, 1)
+gender <- substr(subject,1,1)
+subject <- substr(subject,2,999)
+day <- as.integer(sapply(strsplit(samples.out, "D"), `[`, 2))
+samdf <- data.frame(Subject=subject, Gender=gender, Day=day)
+samdf$When <- "Early"
+samdf$When[samdf$Day>100] <- "Late"
+rownames(samdf) <- samples.out
+
+
+ps <- phyloseq(otu_table(seqtab.nochim, taxa_are_rows=FALSE),
+               sample_data(samdf),
+               tax_table(taxa))
+ps <- prune_samples(sample_names(ps) != "Mock", ps) # Remove mock sample
 
 
 ```
