@@ -7,6 +7,7 @@ output: github_document
 
 ```{r}
 library(dada2)
+library(vegan)
 ```
 
 
@@ -135,6 +136,7 @@ head(track)
 ```{r}
 taxa <- assignTaxonomy(seqtab.nochim,  "/home/rstudio/dada2/dada2/silva_nr99_v138.1_train_set.fa.gz", multithread=TRUE)
 
+taxa <- addSpecies(taxa, "/home/rstudio/dada2/dada2/silva_species_assignment_v138.1.fa.gz")
 
 taxa.print <- taxa # Removing sequence rownames for display only
 rownames(taxa.print) <- NULL
@@ -143,10 +145,22 @@ head(taxa.print)
 ```
 
 ```{r}
-# Accuracy evaluation : mock community -> 20 known sequences 
+# Accuracy evaluation : mock community -> 20 known sequences. On calcule la précision de dada2 sur des séquences connues. Cette évaluation s'applique uniquement à ce jeu de données
 
 
+unqs.mock <- seqtab.nochim["Mock",]
+unqs.mock <- sort(unqs.mock[unqs.mock>0], decreasing=TRUE) # Drop ASVs absent in the Mock
+cat("DADA2 inferred", length(unqs.mock), "sample sequences present in the Mock community.\n")
 
+
+mock.ref <- getSequences(file.path(path, "HMP_MOCK.v35.fasta"))
+match.ref <- sum(sapply(names(unqs.mock), function(x) any(grepl(x, mock.ref))))
+cat("Of those,", sum(match.ref), "were exact matches to the expected reference sequences.\n")
+
+# Ici on à 20 séquences detectée, et 20 séquences correspondant aux séquences de référence : dada2 n'a pas fait d'erreur dans le tri des séquences. Bravo dada2
+```
+```{r}
+#représentation graphique
 
 
 
