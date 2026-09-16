@@ -2,6 +2,11 @@
 title: "import data"
 output: github_document
 ---
+```{bash}
+sudo apt-get update
+sudo apt-get install libglpk40
+
+```
 
 
 

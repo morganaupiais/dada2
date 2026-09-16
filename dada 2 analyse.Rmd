@@ -162,7 +162,8 @@ cat("Of those,", sum(match.ref), "were exact matches to the expected reference s
 
 
 ```{r}
-
+install.packages("igraph")
+BiocManager::install("phyloseq")
 
 
 ```
