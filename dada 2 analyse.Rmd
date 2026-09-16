@@ -162,10 +162,8 @@ cat("Of those,", sum(match.ref), "were exact matches to the expected reference s
 
 
 ```{r}
-install.packages("igraph")
-BiocManager::install("phyloseq")
-
-
+install.packages("igraph", type = "source")
+BiocManager::install("phyloseq", update = FALSE)
 ```
 
 
@@ -200,6 +198,20 @@ ps <- phyloseq(otu_table(seqtab.nochim, taxa_are_rows=FALSE),
                sample_data(samdf),
                tax_table(taxa))
 ps <- prune_samples(sample_names(ps) != "Mock", ps) # Remove mock sample
+
+
+```
+
+```{r}
+dna <- Biostrings::DNAStringSet(taxa_names(ps))
+names(dna) <- taxa_names(ps)
+ps <- merge_phyloseq(ps, dna)
+taxa_names(ps) <- paste0("ASV", seq(ntaxa(ps)))
+ps
+
+plot_richness(ps, x="Day", measures=c("Shannon", "Simpson"), color="When")
+
+
 
 
 ```
