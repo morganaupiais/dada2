@@ -133,7 +133,23 @@ head(track)
 
 ```
 ```{r}
-taxa <- assignTaxonomy(seqtab.nochim, "~/tax/silva_nr99_v138.2_toGenus_trainset.fa.gz", multithread=TRUE)
+taxa <- assignTaxonomy(seqtab.nochim,  "/home/rstudio/dada2/dada2/silva_nr99_v138.1_train_set.fa.gz", multithread=TRUE)
+
+
+taxa.print <- taxa # Removing sequence rownames for display only
+rownames(taxa.print) <- NULL
+head(taxa.print)
+# largemenent dominé par Bacteroidota (fecal samples)
+```
+
+```{r}
+# Accuracy evaluation : mock community -> 20 known sequences 
+
+
+
+
+
+
 
 ```
 

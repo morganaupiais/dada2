@@ -13,8 +13,10 @@ unzip miseqsopdata.zip
 ```{bash}
 #sequence for taxonomy
 
+wget https://zenodo.org/records/4587955/files/silva_nr99_v138.1_train_set.fa.gz
+```
 
-
+```{bash}
 
 ```
 
