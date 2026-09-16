@@ -60,31 +60,34 @@ out <- filterAndTrim(fnFs, filtFs, fnRs, filtRs, truncLen=c(240,160),  #240 nu p
               compress=TRUE, multithread=FALSE) # On Windows set multithread=FALSE (only needed for filterAndTrim)
 head(out)
 # On utilise l'ADN de phix pour vérifier le run de sequençage
+
+
 ```
 ```{r}
 errF <- learnErrors(filtFs, multithread=TRUE)
 errR <- learnErrors(filtRs, multithread=TRUE)
-
-
+# vecteurs contiennent les modèles d'erreurs identifiés par dada2
 
 plotErrors(errF, nominalQ=TRUE)
 
 ```
 ```{r}
-#On applique l'algorythme à notre data filtré et trimmed
+#On applique l'algorythme à notre data filtré et trimmed + en corrigeant les erreurs (on utilise reads filtré et objects erreurs)
+
 dadaFs <- dada(filtFs, err=errF, multithread=TRUE)
 dadaRs <- dada(filtRs, err=errR, multithread=TRUE)
 #sample global parameters
 dadaFs[[1]]
 #128 sequence variants were inferred from 1979 input unique sequences.
 #Key parameters: OMEGA_A = 1e-40, OMEGA_C = 1e-40, BAND_SIZE = 16
+#Object r dépend de la fonction
 
 ```
 
 ```{r}
 
 mergers <- mergePairs(dadaFs, filtFs, dadaRs, filtRs, verbose=TRUE)
-# Inspect the merger data.frame from the first sample
+# Inspect the merger data.frame from the first sample, superposition des reads. On supprime les séquences qui n'ont pas overlap parfaitement
 # List of dataframe from each samples
 head(mergers[[1]])
 
@@ -99,8 +102,37 @@ dim(seqtab)
 table(nchar(getSequences(seqtab)))
 # Les séquences très longues ou très courtes peuvent être signe d'un couplage non spécifique
 
+```
+
+```{r}
+#amplicon sequence variant table (ASV)
+#Remove chimera script : si complexe ADN pol et brin matrice + nouveau brin est déformé, la polymérisation s'arrète avant la fin, le brin d'ADN n'est pas complet. au cycle suivant -> s'hybride à un autre 16S d'une autre bactérie, formation d'une chimère. Une moitié vient d'un 16s et l'autre d'un autre 16s. Erreur commune.
+
+
+seqtab.nochim <- removeBimeraDenovo(seqtab, method="consensus", multithread=TRUE, verbose=TRUE)
+dim(seqtab.nochim)
+
+sum(seqtab.nochim)/sum(seqtab)
+#On a gardé ~96% des observations, pas 96% des séquences
+
 
 ```
 
+```{r}
+# On regarde le nombre de reads qui ont passés chaque étapes du process. 
 
+
+getN <- function(x) sum(getUniques(x))
+track <- cbind(out, sapply(dadaFs, getN), sapply(dadaRs, getN), sapply(mergers, getN), rowSums(seqtab.nochim))
+# If processing a single sample, remove the sapply calls: e.g. replace sapply(dadaFs, getN) with getN(dadaFs)
+colnames(track) <- c("input", "filtered", "denoisedF", "denoisedR", "merged", "nonchim")
+rownames(track) <- sample.names
+head(track)
+
+# exemple : merge enlève trop de séquences : trop de truncage
+
+```
+```{r}
+
+```
 
