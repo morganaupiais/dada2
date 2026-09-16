@@ -95,6 +95,9 @@ head(mergers[[1]])
 seqtab <- makeSequenceTable(mergers)
 dim(seqtab)
 
+#la distribution de la taille des séquences
+table(nchar(getSequences(seqtab)))
+# Les séquences très longues ou très courtes peuvent être signe d'un couplage non spécifique
 
 
 ```
