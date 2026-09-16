@@ -133,6 +133,7 @@ head(track)
 
 ```
 ```{r}
+taxa <- assignTaxonomy(seqtab.nochim, "~/tax/silva_nr99_v138.2_toGenus_trainset.fa.gz", multithread=TRUE)
 
 ```
 
